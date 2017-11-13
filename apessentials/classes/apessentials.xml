@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
+    <http:listener-config name="HTTP_Listener_Configuration_Hello_World" host="0.0.0.0" port="8081" basePath="/ape" doc:name="HTTP Listener Configuration"/>
+    <http:request-config name="HTTP_Request_Configuration" host="localhost" port="8081" basePath="/ape" doc:name="HTTP Request Configuration"/>
+    <flow name="apessentialsFlow1">
+        <http:listener config-ref="HTTP_Listener_Configuration_Hello_World" path="/hello" allowedMethods="GET" doc:name="HTTP_IBEP_Hello_World"/>
+        <set-payload value="Hello" mimeType="text/plain" doc:name="Set Payload"/>
+        <logger message="#[message.payload]" level="INFO" doc:name="Logger"/>
+    </flow>
+    <flow name="apessentialsFlow2">
+        <http:listener config-ref="HTTP_Listener_Configuration_Hello_World" path="/hello2" allowedMethods="GET" doc:name="HTTP_IBEP_Hello_World"/>
+        <set-payload value="Hello" mimeType="text/plain" doc:name="Set Payload"/>
+        <set-variable variableName="trainer" value="#[message.inboundProperties.'http.query.params'.myTrainerName]" doc:name="Flow Variable trainer"/>
+        <set-session-variable variableName="training" value="#[message.inboundProperties.'http.query.params'.myTraining]" doc:name="Session Variable training"/>
+        <copy-properties propertyName="http.query.params" doc:name="Property"/>
+        <vm:outbound-endpoint exchange-pattern="request-response" path="myq" doc:name="VM OBEP myq"/>
+        <logger level="INFO" doc:name="Final Logger"/>
+    </flow>
+    <flow name="apessentialsFlow3">
+        <vm:inbound-endpoint exchange-pattern="request-response" path="myq" doc:name="VM IBEP myq"/>
+        <append-string-transformer message=" To All" doc:name="Append String"/>
+        <set-variable variableName="numberOfParticipants" value="#[message.inboundProperties.'http.query.params'.np]" doc:name="Flow Variable numberOfParticipants"/>
+        <set-session-variable variableName="numberOfDays" value="#[message.inboundProperties.'http.query.params'.nd]" doc:name="Session Variable numberOfDays"/>
+        <logger message="#[message.payload]" level="INFO" doc:name="Logger"/>
+    </flow>
+</mule>
