@@ -142,6 +142,11 @@ Set Destination
 #[(flowVars.destination ==empty && message.inboundProperties.'http.query.params'.code == empty) ? 'SFO' : (flowVars.destination != empty ? flowVars.destination : message.inboundProperties.'http.query.params'.code)]
 
 FlightRequest object
-#[new com.mulesoft.training.FlightRequest(flowVars.destination,message.inboundProperties.'http.query.params'.airline)]
+#[new com.mulesoft.training.FlightRequest(flowVars.destination,message.inboundProperties.'http.query.params'.airline)
 
- 
+
+**************** Notes *****************
+Security Module
+https://docs.mulesoft.com/release-notes/anypoint-enterprise-security-release-notes
+Encryption
+https://docs.mulesoft.com/mule-user-guide/v/3.8/mule-credentials-vault
